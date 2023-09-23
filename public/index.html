@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<title>rust chat app - login</title>
+
+		<style>
+			#messages {
+				display: flex;
+				flex-direction: column;
+			}
+		</style>
+	</head>
+
+	<script>
+		function sendMessage() {
+			const input = document.getElementById("input");
+
+			if (input !== null) {
+				fetch("/message", {
+					method: "POST",
+					credentials: "include",
+					body: input.value,
+				}).then(response => {
+					if (response.status === 200) {
+						console.log("message sent");
+					}
+				});
+			}
+		}
+
+		const chatClient = new WebSocket("ws://localhost:5050/chat");
+
+		chatClient.onmessage = event => {
+			const message = document.createElement("span");
+			message.appendChild(document.createTextNode(event.data));
+			document.getElementById("messages").appendChild(message);
+		};
+	</script>
+
+	<body>
+		<div>
+			<input id="input" />
+			<button onclick="sendMessage()">send chat</button>
+		</div>
+		<div id="messages"></div>
+	</body>
+</html>
